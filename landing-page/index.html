@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!-- For best results, serve this file with a local web server (e.g., python3 -m http.server) -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kenku 2.0 – AI-Powered Grappling Insights</title>
+  <meta name="description" content="Join the waitlist for Kenku 2.0 – the AI-powered notebook for grappling athletes. Smarter training, semantic search, and actionable analytics.">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+  <!--
+    For local development, you can inject environment variables into the page using a <script type="env"> tag or similar build tooling.
+    Example:
+    <script type="env">
+      window.SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+      window.SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    </script>
+    Make sure to NOT commit your real keys to public repos.
+  -->
+  <link rel="icon" href="https://kenku.app/favicon.ico">
+  <style>
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-white text-black font-sans">
+  <noscript>
+    <div class="bg-red-100 text-red-700 p-4 text-center font-bold">This site requires JavaScript to function properly. Please enable JavaScript in your browser.</div>
+  </noscript>
+  <!-- Navigation -->
+  <header class="fixed top-0 w-full bg-white/90 backdrop-blur border-b border-gray-200 z-50">
+    <nav class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <div class="font-black text-2xl">Kenku 2.0</div>
+      <div class="hidden md:flex space-x-8 font-medium">
+        <a href="#features" class="hover:text-gray-700 transition-colors">Features</a>
+        <a href="#tech" class="hover:text-gray-700 transition-colors">Technology</a>
+        <a href="#analytics" class="hover:text-gray-700 transition-colors">Analytics</a>
+        <a href="#waitlist" class="hover:text-gray-700 transition-colors">Waitlist</a>
+      </div>
+      <!-- Mobile menu -->
+      <div class="md:hidden" x-data="{ open: false }">
+        <button @click="open = !open" class="p-2 rounded border border-gray-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+        <div x-show="open" @click.away="open = false" class="absolute right-6 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg py-2 z-50">
+          <a href="#features" class="block px-4 py-2 hover:bg-gray-50" @click="open = false">Features</a>
+          <a href="#tech" class="block px-4 py-2 hover:bg-gray-50" @click="open = false">Technology</a>
+          <a href="#analytics" class="block px-4 py-2 hover:bg-gray-50" @click="open = false">Analytics</a>
+          <a href="#waitlist" class="block px-4 py-2 hover:bg-gray-50" @click="open = false">Waitlist</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="min-h-screen flex items-center justify-center bg-white pt-32 pb-16" id="hero">
+    <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto px-6 items-center">
+      <div>
+        <h1 class="text-black font-black text-5xl lg:text-7xl leading-tight mb-4">Train Smarter with <span class="text-gray-900">AI-Powered</span> Grappling Insights</h1>
+        <p class="font-semibold text-xl lg:text-2xl text-gray-700 mb-8">Kenku 2.0 revolutionizes your training journal with semantic search, actionable analytics, and an AI coach that learns your game.</p>
+      </div>
+      <div>
+        <div class="bg-white border-4 border-black shadow-2xl rounded-2xl p-8 max-w-md mx-auto lg:mx-0">
+          <h2 class="text-black font-black text-3xl lg:text-4xl leading-tight mb-2">Get Early Access</h2>
+          <p class="font-semibold text-lg lg:text-xl text-gray-700 mb-6">Join the Kenku 2.0 beta waitlist and help shape the future of grappling analytics. Limited spots available!</p>
+          <form class="space-y-4" x-data="waitlistForm()" @submit.prevent="submit">
+            <div>
+              <label for="email" class="block mb-2 font-semibold">Email Address</label>
+              <input type="email" id="email" x-model="email" required placeholder="you@example.com" class="w-full px-4 py-3 border-2 border-black bg-transparent text-black placeholder-gray-400 focus:outline-none focus:border-gray-700 rounded" :disabled="loading">
+            </div>
+            <div>
+              <button type="submit" class="w-full bg-black text-white py-4 text-lg font-bold hover:bg-gray-900 transition-colors rounded flex items-center justify-center" :disabled="loading">
+                <span x-show="!loading">Join Waitlist</span>
+                <svg x-show="loading" class="animate-spin h-5 w-5 ml-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+              </button>
+            </div>
+            <template x-if="success">
+              <div class="text-green-600 font-semibold">Thank you! You're on the waitlist.</div>
+            </template>
+            <template x-if="error">
+              <div class="text-red-600 font-semibold">Something went wrong. Please try again.</div>
+            </template>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem Statement -->
+  <section class="bg-gray-50 py-20" id="problem">
+    <div class="max-w-4xl mx-auto px-6 text-center space-y-8">
+      <h2 class="font-bold text-4xl lg:text-6xl text-black leading-tight">Why settle for static training journals?</h2>
+      <p class="font-normal text-base lg:text-lg leading-relaxed text-gray-700">Traditional notebooks and apps force you to flip, scroll, and search endlessly. They miss connections, can't analyze your progress, and never adapt to your evolving game. Kenku 2.0 changes everything.</p>
+    </div>
+  </section>
+
+  <!-- Feature Cards Grid -->
+  <section class="py-20" id="features">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto px-6">
+      <!-- Feature 1 -->
+      <div class="bg-white border-2 border-black p-8 hover:shadow-lg transition-shadow rounded-xl flex flex-col items-start">
+        <svg class="w-12 h-12 mb-4 stroke-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" /></svg>
+        <h3 class="font-bold text-xl mb-4">AI Coach</h3>
+        <p class="font-normal text-base leading-relaxed text-gray-700">Get personalized suggestions, study plans, and feedback based on your unique training data.</p>
+      </div>
+      <!-- Feature 2 -->
+      <div class="bg-white border-2 border-black p-8 hover:shadow-lg transition-shadow rounded-xl flex flex-col items-start">
+        <svg class="w-12 h-12 mb-4 stroke-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M8 12l2 2 4-4" /></svg>
+        <h3 class="font-bold text-xl mb-4">Semantic Search</h3>
+        <p class="font-normal text-base leading-relaxed text-gray-700">Find any technique, note, or concept instantly with natural language and semantic matching.</p>
+      </div>
+      <!-- Feature 3 -->
+      <div class="bg-white border-2 border-black p-8 hover:shadow-lg transition-shadow rounded-xl flex flex-col items-start">
+        <svg class="w-12 h-12 mb-4 stroke-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 8h8v8H8z" /></svg>
+        <h3 class="font-bold text-xl mb-4">Actionable Analytics</h3>
+        <p class="font-normal text-base leading-relaxed text-gray-700">Visualize your progress, spot trends, and get insights that drive improvement.</p>
+      </div>
+      <!-- Feature 4 -->
+      <div class="bg-white border-2 border-black p-8 hover:shadow-lg transition-shadow rounded-xl flex flex-col items-start">
+        <svg class="w-12 h-12 mb-4 stroke-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18" /></svg>
+        <h3 class="font-bold text-xl mb-4">Notebook Aesthetic</h3>
+        <p class="font-normal text-base leading-relaxed text-gray-700">Clean, sharp borders and generous white space for a focused, distraction-free experience.</p>
+      </div>
+      <!-- Feature 5 -->
+      <div class="bg-white border-2 border-black p-8 hover:shadow-lg transition-shadow rounded-xl flex flex-col items-start">
+        <svg class="w-12 h-12 mb-4 stroke-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 20V4m8 8H4" /></svg>
+        <h3 class="font-bold text-xl mb-4">Mobile-First</h3>
+        <p class="font-normal text-base leading-relaxed text-gray-700">Designed for every device. Touch-friendly, readable, and lightning fast.</p>
+      </div>
+      <!-- Feature 6 -->
+      <div class="bg-white border-2 border-black p-8 hover:shadow-lg transition-shadow rounded-xl flex flex-col items-start">
+        <svg class="w-12 h-12 mb-4 stroke-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" /></svg>
+        <h3 class="font-bold text-xl mb-4">Beta Community</h3>
+        <p class="font-normal text-base leading-relaxed text-gray-700">Shape the future of grappling analytics by joining our early access group.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Coach Feature (Tech Explainer)
+  <section class="py-20" id="tech">
+    <div class="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto px-6">
+      <div>
+        <h2 class="font-bold text-4xl lg:text-6xl mb-4 leading-tight">Meet Your AI Coach</h2>
+        <p class="font-normal text-base lg:text-lg leading-relaxed mb-6">Kenku's AI analyzes your entries, identifies patterns, and suggests drills or techniques to accelerate your progress. It's like having a world-class coach in your pocket.</p>
+        <ul class="space-y-4">
+          <li class="flex items-start"><span class="font-mono bg-gray-100 px-2 py-1 rounded mr-2">Personalized</span> feedback for every session</li>
+          <li class="flex items-start"><span class="font-mono bg-gray-100 px-2 py-1 rounded mr-2">Adaptive</span> learning based on your style</li>
+          <li class="flex items-start"><span class="font-mono bg-gray-100 px-2 py-1 rounded mr-2">Actionable</span> suggestions you can use immediately</li>
+        </ul>
+      </div>
+      <div class="flex justify-center lg:order-2">
+        <!-- Creative SVG for AI Coach -->
+        <!-- <svg width="260" height="260" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg" class="rounded-xl border-2 border-black shadow-lg w-full max-w-xs bg-gray-50">
+          <rect x="20" y="40" width="220" height="180" rx="32" fill="#fff" stroke="#111" stroke-width="4"/>
+          <ellipse cx="130" cy="130" rx="60" ry="70" fill="#f3f4f6" stroke="#111" stroke-width="3"/>
+          <ellipse cx="130" cy="130" rx="40" ry="50" fill="#fff" stroke="#111" stroke-width="2"/>
+          <circle cx="110" cy="120" r="8" fill="#111"/>
+          <circle cx="150" cy="120" r="8" fill="#111"/>
+          <rect x="110" y="160" width="40" height="10" rx="5" fill="#d1fae5" stroke="#111" stroke-width="2"/>
+          <text x="130" y="200" text-anchor="middle" font-size="18" fill="#111" font-family="monospace">AI Coach</text>
+        </svg>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- Semantic Database Deep Dive (Tech Explainer) -->
+  <!-- <section class="py-20 bg-gray-50" id="semantic">
+    <div class="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto px-6">
+      <div class="lg:order-2">
+        <h2 class="font-bold text-4xl lg:text-6xl mb-4 leading-tight">Semantic Database Deep Dive</h2>
+        <p class="font-normal text-base lg:text-lg leading-relaxed mb-6">Every entry is <span class="font-mono bg-gray-100 px-2 py-1 rounded">vectorized</span> and indexed for <span class="font-mono bg-gray-100 px-2 py-1 rounded">semantic matching</span>. This means you can search, connect, and analyze your training like never before.</p>
+        <ul class="space-y-4">
+          <li><span class="font-mono bg-gray-100 px-2 py-1 rounded">Searchability</span> – Instantly find any note or technique</li>
+          <li><span class="font-mono bg-gray-100 px-2 py-1 rounded">Analytics</span> – Track improvement and spot trends</li>
+          <li><span class="font-mono bg-gray-100 px-2 py-1 rounded">Connections</span> – Discover links between concepts</li>
+        </ul>
+      </div>
+      <div class="flex justify-center lg:order-1">
+        <div class="bg-gray-900 text-green-400 font-mono p-4 rounded border w-full max-w-md text-sm shadow-lg">
+<pre><code>// Example: Semantic Search
+const query = "armbar from guard";
+const results = kenku.semanticSearch(query);
+console.log(results); // ["armbar entry 1", "armbar entry 2", ...]</code></pre>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- Analytics Dashboard Preview -->
+  <!-- <section class="py-20" id="analytics">
+    <div class="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto px-6">
+      <div>
+        <h2 class="font-bold text-4xl lg:text-6xl mb-4 leading-tight">Analytics Dashboard Preview</h2>
+        <p class="font-normal text-base lg:text-lg leading-relaxed mb-6">Visualize your training with beautiful, interactive dashboards. See your most-used techniques, track your improvement, and get actionable insights at a glance.</p>
+        <ul class="space-y-4">
+          <li><span class="font-mono bg-gray-100 px-2 py-1 rounded">Technique Frequency</span> – What you drill most</li>
+          <li><span class="font-mono bg-gray-100 px-2 py-1 rounded">Improvement Over Time</span> – See your progress</li>
+          <li><span class="font-mono bg-gray-100 px-2 py-1 rounded">Custom Reports</span> – Analytics tailored to your goals</li>
+        </ul>
+      </div>
+      <div class="flex justify-center lg:order-2"> -->
+        <!-- Creative SVG for Analytics Dashboard -->
+        <!-- <svg width="260" height="180" viewBox="0 0 260 180" fill="none" xmlns="http://www.w3.org/2000/svg" class="rounded-xl border-2 border-black shadow-lg w-full max-w-xs bg-gray-50">
+          <rect x="10" y="20" width="240" height="140" rx="18" fill="#fff" stroke="#111" stroke-width="4"/>
+          <rect x="40" y="120" width="30" height="30" rx="6" fill="#a7f3d0" stroke="#111" stroke-width="2"/>
+          <rect x="80" y="90" width="30" height="60" rx="6" fill="#fbbf24" stroke="#111" stroke-width="2"/>
+          <rect x="120" y="60" width="30" height="90" rx="6" fill="#60a5fa" stroke="#111" stroke-width="2"/>
+          <rect x="160" y="100" width="30" height="50" rx="6" fill="#f472b6" stroke="#111" stroke-width="2"/>
+          <rect x="200" y="80" width="30" height="70" rx="6" fill="#34d399" stroke="#111" stroke-width="2"/>
+          <polyline points="55,135 95,120 135,90 175,120 215,100" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="55" cy="135" r="4" fill="#111"/>
+          <circle cx="95" cy="120" r="4" fill="#111"/>
+          <circle cx="135" cy="90" r="4" fill="#111"/>
+          <circle cx="175" cy="120" r="4" fill="#111"/>
+          <circle cx="215" cy="100" r="4" fill="#111"/>
+          <text x="130" y="170" text-anchor="middle" font-size="18" fill="#111" font-family="monospace">Analytics</text>
+        </
+        -->
+  <footer class="py-8 text-center text-gray-400 text-sm">
+    &copy; 2025 Kenku. All rights reserved. Built by <a href="https://instagram.com/hiptossjosh" class="underline hover:text-gray-200">@hiptossjosh</a>.
+  </footer>
+
+  <script>
+    // Alpine.js waitlist form logic with Supabase integration
+    // Load Supabase credentials from environment variables
+    const SUPABASE_URL = window.SUPABASE_URL || '';
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      console.warn('Supabase credentials are not set. Please inject them using a <script type="env"> tag.');
+    }
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function waitlistForm() {
+      return {
+        email: '',
+        loading: false,
+        success: false,
+        error: false,
+        async submit() {
+          this.loading = true;
+          this.success = false;
+          this.error = false;
+          // Supabase insert
+          try {
+            const { error } = await supabase.from('waitlist').insert([{ email: this.email }]);
+            if (error) {
+              this.error = true;
+            } else {
+              this.success = true;
+              this.email = '';
+            }
+          } catch (e) {
+            this.error = true;
+          }
+          this.loading = false;
+        }
+      }
+    }
+  </script>
+</body>
+</html> 
