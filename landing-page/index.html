@@ -261,10 +261,12 @@ console.log(results); // ["armbar entry 1", "armbar entry 2", ...]</code></pre>
     }
   </script>
 
-  <!-- Vercel: Inject Supabase env variables at build time -->
-  <script>
-    window.SUPABASE_URL = "${process.env.SUPABASE_URL}";
-    window.SUPABASE_ANON_KEY = "${process.env.SUPABASE_ANON_KEY}";
-  </script>
+  
+<!-- Vercel: Inject Supabase env variables at build time -->
+<script>
+  window.SUPABASE_URL = "undefined";
+  window.SUPABASE_ANON_KEY = "undefined";
+</script>
+
 </body>
 </html> 
