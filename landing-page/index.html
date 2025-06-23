@@ -226,12 +226,12 @@ console.log(results); // ["armbar entry 1", "armbar entry 2", ...]</code></pre>
   <script>
     // Alpine.js waitlist form logic with Supabase integration
     // Load Supabase credentials from environment variables
-    const supabase_url = window.supabase_url || '';
-    const supabase_anon_key = window.supabase_anon_key || '';
-    if (!supabase_url || !supabase_anon_key) {
+    const SUPABASE_URL = window.SUPABASE_URL || '';
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
       console.warn('Supabase credentials are not set. Please inject them using a <script> tag.');
     }
-    const supabase = window.supabase.createClient(supabase_url, supabase_anon_key);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     function waitlistForm() {
       return {
@@ -263,8 +263,8 @@ console.log(results); // ["armbar entry 1", "armbar entry 2", ...]</code></pre>
 
   <!-- Vercel: Inject Supabase env variables at build time -->
   <script>
-    window.supabase_url = "${process.env.supabase_url}";
-    window.supabase_anon_key = "${process.env.supabase_anon_key}";
+    window.SUPABASE_URL = "${process.env.SUPABASE_URL}";
+    window.SUPABASE_ANON_KEY = "${process.env.SUPABASE_ANON_KEY}";
   </script>
 </body>
 </html> 
