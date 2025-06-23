@@ -89,7 +89,7 @@ export default function Home() {
                   </button>
                 </div>
                 {success && <div className="text-green-600 font-semibold">Thank you! You&apos;re on the waitlist.</div>}
-                {error && <div className="text-red-600 font-semibold">Something went wrong. Please try again.</div>}
+                {error && <div className="text-red-600 font-semibold">Something went wrong. Please try again. You&apos;re not on the waitlist.</div>}
               </form>
             </div>
           </div>
