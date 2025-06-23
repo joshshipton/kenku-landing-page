@@ -2,10 +2,6 @@
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 export default function Home() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,6 +13,10 @@ export default function Home() {
     setLoading(true);
     setSuccess(false);
     setError(false);
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     try {
       const { error } = await supabase.from("waitlist").insert([{ email }]);
       if (error) {
@@ -88,8 +88,8 @@ export default function Home() {
                     )}
                   </button>
                 </div>
-                {success && <div className="text-green-600 font-semibold">Thank you! You&apos;re on the waitlist.</div>}
-                {error && <div className="text-red-600 font-semibold">Something went wrong. Please try again. You&apos;re not on the waitlist.</div>}
+                {success && <div className="text-green-600 font-semibold">Thank you! You are on the waitlist.</div>}
+                {error && <div className="text-red-600 font-semibold">Something went wrong. Please try again. You are not on the waitlist.</div>}
               </form>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 text-center space-y-8">
           <h2 className="font-bold text-4xl lg:text-6xl text-black leading-tight">Why settle for static training journals?</h2>
           <p className="font-normal text-base lg:text-lg leading-relaxed text-gray-700">
-            Traditional notebooks and apps force you to flip, scroll, and search endlessly. They miss connections, can't analyze your progress, and never adapt to your evolving game. Kenku 2.0 changes everything.
+            Traditional notebooks and apps force you to flip, scroll, and search endlessly. They miss connections, can&apos;t analyze your progress, and never adapt to your evolving game. Kenku 2.0 changes everything.
           </p>
         </div>
       </section>
