@@ -7,12 +7,14 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [alreadyOnWaitlist, setAlreadyOnWaitlist] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setSuccess(false);
     setError(false);
+    setAlreadyOnWaitlist(false);
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -20,7 +22,12 @@ export default function Home() {
     try {
       const { error } = await supabase.from("waitlist").insert([{ email }]);
       if (error) {
-        setError(true);
+        // Check for duplicate email error (Supabase/Postgres unique violation)
+        if (error.code === '23505' || (error.message && error.message.toLowerCase().includes('duplicate'))) {
+          setAlreadyOnWaitlist(true);
+        } else {
+          setError(true);
+        }
       } else {
         setSuccess(true);
         setEmail("");
@@ -61,7 +68,7 @@ export default function Home() {
             <div className="bg-white border-4 border-black shadow-2xl rounded-2xl p-8 max-w-md mx-auto lg:mx-0">
               <h2 className="text-black font-black text-3xl lg:text-4xl leading-tight mb-2">Get Early Access</h2>
               <p className="font-semibold text-lg lg:text-xl text-gray-700 mb-6">
-                Join the Kenku 2.0 beta waitlist and help shape the future of grappling analytics. Limited spots available!
+                Join the Kenku 2.0 beta waitlist. Limited spots available!
               </p>
               <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
@@ -89,6 +96,7 @@ export default function Home() {
                   </button>
                 </div>
                 {success && <div className="text-green-600 font-semibold">Thank you! You are on the waitlist.</div>}
+                {alreadyOnWaitlist && <div className="text-blue-600 font-semibold">You are already on the waitlist!</div>}
                 {error && <div className="text-red-600 font-semibold">Something went wrong. Please try again. You are not on the waitlist.</div>}
               </form>
             </div>
